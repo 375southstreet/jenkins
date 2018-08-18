@@ -1,2 +1,16 @@
 println "pyflask-web Jenkins Pipeline"
-
+checkout([
+	$class: 'GitSCM', 
+	branches: [[name: '*/master']], 
+	doGenerateSubmoduleConfigurations: false, 
+	extensions: [], 
+	submoduleCfg: [], 
+	userRemoteConfigs: [[
+		credentialsId: 'github-creds', 
+		url: 'https://github.com/375southstreet/pyflask-web.git'
+	]]
+])
+dir("pyflask-web"){
+	sh "pwd"
+	sh "ls -lrt"
+}
