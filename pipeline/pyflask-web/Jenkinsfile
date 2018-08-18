@@ -1,4 +1,6 @@
 println "pyflask-web Jenkins Pipeline"
+node() {
+
 checkout([
 	$class: 'GitSCM', 
 	branches: [[name: '*/master']], 
@@ -13,4 +15,5 @@ checkout([
 dir("pyflask-web"){
 	sh "pwd"
 	sh "ls -lrt"
+}
 }
