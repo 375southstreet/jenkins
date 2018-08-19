@@ -1,19 +1,36 @@
 println "pyflask-web Jenkins Pipeline"
 node() {
 
-checkout([
-	$class: 'GitSCM', 
-	branches: [[name: '*/master']], 
-	doGenerateSubmoduleConfigurations: false, 
-	extensions: [], 
-	submoduleCfg: [], 
-	userRemoteConfigs: [[
-		credentialsId: 'github-creds', 
-		url: 'https://github.com/375southstreet/pyflask-web.git'
-	]]
-])
-dir("pyflask-web"){
-	sh "pwd"
-	sh "ls -lrt"
-}
+	stage('Checkout Flask App')
+	{
+
+		checkout([
+			$class: 'GitSCM',
+			branches: [[name: '*/master']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [],
+			submoduleCfg: [],
+			userRemoteConfigs: [[
+				credentialsId: 'github-creds',
+				url: 'https://github.com/375southstreet/pyflask-web.git'
+			]]
+		])
+
+	}
+
+	stage('Build Docker Image'){
+		sh "pwd"
+		sh "ls -lrt"
+		sh "docker container stop pyflask-docker"
+	 	sh "docker container rm pyflask-docker"
+		sh "docker build -t pyflask-docker:lts ."
+	}
+
+	stage('Restart pyflask container')
+	{
+
+		sh "docker run -d -p 5001:5000 --name pyflask-docker pyflask-docker:lts"
+
+	}
+
 }
